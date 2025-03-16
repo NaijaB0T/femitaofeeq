@@ -3,79 +3,22 @@ import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-
-const categories = ["All", "Feature Films", "Documentaries", "Music Videos", "Commercials", "Short Films"];
-
-const portfolioItems = [
-  {
-    id: 1,
-    title: "Lagos Nights",
-    category: "Short Films",
-    thumbnail: "https://images.unsplash.com/photo-1543536448-1e76fc2795bf?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    year: 2023,
-    client: "Independent Production"
-  },
-  {
-    id: 2,
-    title: "Rhythms of Yoruba",
-    category: "Documentaries",
-    thumbnail: "https://images.unsplash.com/photo-1568168172820-83c587783f91?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    year: 2022,
-    client: "Cultural Heritage Foundation"
-  },
-  {
-    id: 3,
-    title: "Harmony",
-    category: "Music Videos",
-    thumbnail: "https://images.unsplash.com/photo-1559762705-2123aa9b467f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    year: 2023,
-    client: "AfroBeats Records"
-  },
-  {
-    id: 4,
-    title: "Urban Echoes",
-    category: "Commercials",
-    thumbnail: "https://images.unsplash.com/photo-1518130772768-f31b4902c12b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    year: 2021,
-    client: "Lagos Tourism Board"
-  },
-  {
-    id: 5,
-    title: "The Last Fisherman",
-    category: "Feature Films",
-    thumbnail: "https://images.unsplash.com/photo-1493804714600-6edb1cd93080?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    year: 2022,
-    client: "Nollywood Productions"
-  },
-  {
-    id: 6,
-    title: "Market Day",
-    category: "Documentaries",
-    thumbnail: "https://images.unsplash.com/photo-1605773527852-c546a8584ea3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    year: 2023,
-    client: "African Cultures Institute"
-  },
-  {
-    id: 7,
-    title: "Whispers",
-    category: "Short Films",
-    thumbnail: "https://images.unsplash.com/photo-1482859454941-1929825988b2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    year: 2021,
-    client: "Film Festival Entry"
-  },
-  {
-    id: 8,
-    title: "Beyond Tomorrow",
-    category: "Commercials",
-    thumbnail: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    year: 2023,
-    client: "Tech Innovations Inc."
-  }
-];
+import { jsonStorage, PortfolioItem } from '../utils/jsonStorage';
 
 const Works = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [filteredItems, setFilteredItems] = useState(portfolioItems);
+  const [filteredItems, setFilteredItems] = useState<PortfolioItem[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([]);
+  
+  useEffect(() => {
+    // Load categories and portfolio items from storage
+    const cats = ["All", ...jsonStorage.getCategories()];
+    setCategories(cats);
+    
+    const items = jsonStorage.getPortfolioItems();
+    setPortfolioItems(items);
+  }, []);
   
   useEffect(() => {
     // Scroll to top when component mounts
@@ -87,7 +30,7 @@ const Works = () => {
     } else {
       setFilteredItems(portfolioItems.filter(item => item.category === selectedCategory));
     }
-  }, [selectedCategory]);
+  }, [selectedCategory, portfolioItems]);
   
   // Initialize animation observer
   useEffect(() => {
@@ -171,6 +114,12 @@ const Works = () => {
                 </div>
               ))}
             </div>
+            
+            {filteredItems.length === 0 && (
+              <div className="text-center py-20">
+                <p className="text-gray-500 text-lg">No portfolio items found in this category.</p>
+              </div>
+            )}
           </div>
         </section>
       </main>

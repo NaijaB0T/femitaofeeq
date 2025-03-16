@@ -2,38 +2,7 @@
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-
-// Sample portfolio items
-const portfolioItems = [
-  {
-    id: 1,
-    title: "Lagos Nights",
-    category: "Short Film",
-    thumbnail: "https://images.unsplash.com/photo-1543536448-1e76fc2795bf?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    year: 2023
-  },
-  {
-    id: 2,
-    title: "Rhythms of Yoruba",
-    category: "Documentary",
-    thumbnail: "https://images.unsplash.com/photo-1568168172820-83c587783f91?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    year: 2022
-  },
-  {
-    id: 3,
-    title: "Harmony",
-    category: "Music Video",
-    thumbnail: "https://images.unsplash.com/photo-1559762705-2123aa9b467f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    year: 2023
-  },
-  {
-    id: 4,
-    title: "Urban Echoes",
-    category: "Commercial",
-    thumbnail: "https://images.unsplash.com/photo-1518130772768-f31b4902c12b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    year: 2021
-  }
-];
+import { jsonStorage } from '../utils/jsonStorage';
 
 const WorkShowcase = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -70,6 +39,11 @@ const WorkShowcase = () => {
       });
     };
   }, []);
+  
+  // Get featured portfolio items from storage
+  const portfolioItems = jsonStorage.getPortfolioItems()
+    .filter(item => item.featured)
+    .slice(0, 4);
   
   return (
     <section ref={sectionRef} className="py-24" id="work">

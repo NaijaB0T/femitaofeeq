@@ -1,6 +1,8 @@
 
 import { useState } from 'react';
 import { Mail, Phone, Send } from 'lucide-react';
+import { jsonStorage } from '../utils/jsonStorage';
+import { toast } from 'sonner';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -17,12 +19,20 @@ const Contact = () => {
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real application, this would send the form data to a backend
-    console.log('Form submitted:', formData);
-    // Reset form
-    setFormData({ name: '', email: '', subject: '', message: '' });
-    // Show success message
-    alert('Thanks for your message! I\'ll get back to you soon.');
+    
+    // Save message to localStorage
+    try {
+      jsonStorage.saveMessage(formData);
+      
+      // Reset form
+      setFormData({ name: '', email: '', subject: '', message: '' });
+      
+      // Show success message
+      toast.success('Thanks for your message! I\'ll get back to you soon.');
+    } catch (error) {
+      console.error('Error saving message:', error);
+      toast.error('There was a problem sending your message. Please try again.');
+    }
   };
   
   return (
