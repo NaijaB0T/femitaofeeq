@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import AdminLayout from '../../components/AdminLayout';
@@ -5,18 +6,64 @@ import { jsonStorage } from '../../utils/jsonStorage';
 import { Plus, Save, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
+import { 
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
+import { Instagram, Twitter, Youtube, Facebook, Linkedin } from 'lucide-react';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+// Define schema for social media form
+const socialMediaSchema = z.object({
+  instagram: z.string().url({ message: "Please enter a valid Instagram URL" }).or(z.string().length(0)),
+  twitter: z.string().url({ message: "Please enter a valid Twitter URL" }).or(z.string().length(0)),
+  vimeo: z.string().url({ message: "Please enter a valid Vimeo URL" }).or(z.string().length(0)),
+  facebook: z.string().url({ message: "Please enter a valid Facebook URL" }).or(z.string().length(0)),
+  linkedin: z.string().url({ message: "Please enter a valid LinkedIn URL" }).or(z.string().length(0))
+});
+
+type SocialMediaFormValues = z.infer<typeof socialMediaSchema>;
 
 const Settings = () => {
   const [categories, setCategories] = useState<string[]>([]);
   const [newCategory, setNewCategory] = useState('');
   
+  // Initialize form with social media schema
+  const form = useForm<SocialMediaFormValues>({
+    resolver: zodResolver(socialMediaSchema),
+    defaultValues: {
+      instagram: '',
+      twitter: '',
+      vimeo: '',
+      facebook: '',
+      linkedin: ''
+    }
+  });
+  
   useEffect(() => {
     loadCategories();
+    loadSocialMedia();
   }, []);
   
   const loadCategories = () => {
     const cats = jsonStorage.getCategories();
     setCategories(cats);
+  };
+  
+  const loadSocialMedia = () => {
+    const socialHandles = jsonStorage.getSocialMedia();
+    
+    // Set form values from storage
+    if (socialHandles) {
+      form.reset(socialHandles);
+    }
   };
   
   const handleAddCategory = () => {
@@ -42,6 +89,11 @@ const Settings = () => {
       loadCategories();
       toast.success('Category deleted successfully');
     }
+  };
+  
+  const onSubmitSocialMedia = (values: SocialMediaFormValues) => {
+    jsonStorage.saveSocialMedia(values);
+    toast.success('Social media links updated successfully');
   };
   
   return (
@@ -114,7 +166,118 @@ const Settings = () => {
               </div>
             </div>
             
-            {/* Other Settings Section */}
+            {/* Social Media Section */}
+            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                <h2 className="text-lg font-semibold">Social Media Links</h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  Manage your social media profiles
+                </p>
+              </div>
+              
+              <div className="p-6">
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmitSocialMedia)} className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="instagram"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center">
+                            <Instagram className="h-4 w-4 mr-2" />
+                            Instagram
+                          </FormLabel>
+                          <FormControl>
+                            <Input placeholder="https://instagram.com/yourusername" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="twitter"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center">
+                            <Twitter className="h-4 w-4 mr-2" />
+                            Twitter
+                          </FormLabel>
+                          <FormControl>
+                            <Input placeholder="https://twitter.com/yourusername" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="vimeo"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center">
+                            <Youtube className="h-4 w-4 mr-2" />
+                            Vimeo
+                          </FormLabel>
+                          <FormControl>
+                            <Input placeholder="https://vimeo.com/yourusername" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="facebook"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center">
+                            <Facebook className="h-4 w-4 mr-2" />
+                            Facebook
+                          </FormLabel>
+                          <FormControl>
+                            <Input placeholder="https://facebook.com/yourpage" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="linkedin"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center">
+                            <Linkedin className="h-4 w-4 mr-2" />
+                            LinkedIn
+                          </FormLabel>
+                          <FormControl>
+                            <Input placeholder="https://linkedin.com/in/yourusername" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <div className="pt-2">
+                      <button
+                        type="submit"
+                        className="inline-flex items-center bg-cinema-black text-cinema-yellow px-4 py-2 rounded-md hover:bg-opacity-90 transition-colors"
+                      >
+                        <Save className="h-5 w-5 mr-2" />
+                        Save Social Links
+                      </button>
+                    </div>
+                  </form>
+                </Form>
+              </div>
+            </div>
+            
+            {/* Website Information Section */}
             <div className="bg-white rounded-lg shadow-md overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
                 <h2 className="text-lg font-semibold">Website Information</h2>

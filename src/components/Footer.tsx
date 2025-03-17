@@ -1,8 +1,18 @@
 
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { jsonStorage, SocialMedia } from '../utils/jsonStorage';
+import { Instagram, Twitter, Facebook, Linkedin } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const [socialMedia, setSocialMedia] = useState<SocialMedia>({});
+  
+  useEffect(() => {
+    // Load social media links from storage
+    const socialLinks = jsonStorage.getSocialMedia();
+    setSocialMedia(socialLinks);
+  }, []);
   
   return (
     <footer className="py-12 bg-cinema-black text-cinema-yellow">
@@ -17,33 +27,65 @@ const Footer = () => {
               bringing stories to life through the power of visual storytelling.
             </p>
             <div className="flex space-x-4">
-              <a 
-                href="https://instagram.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-cinema-yellow/80 hover:text-cinema-yellow transition-colors"
-                aria-label="Instagram"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-              </a>
-              <a 
-                href="https://twitter.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-cinema-yellow/80 hover:text-cinema-yellow transition-colors"
-                aria-label="Twitter"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
-              </a>
-              <a 
-                href="https://vimeo.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-cinema-yellow/80 hover:text-cinema-yellow transition-colors"
-                aria-label="Vimeo"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V5a3 3 0 0 0-3-3Z"></path><path d="M10 9a3 3 0 0 0-3 3v5h3v-5"></path><path d="M17 9h-4v8h4a4 4 0 0 0 0-8Z"></path></svg>
-              </a>
+              {socialMedia.instagram && (
+                <a 
+                  href={socialMedia.instagram} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-cinema-yellow/80 hover:text-cinema-yellow transition-colors"
+                  aria-label="Instagram"
+                >
+                  <Instagram className="h-5 w-5" />
+                </a>
+              )}
+              
+              {socialMedia.twitter && (
+                <a 
+                  href={socialMedia.twitter} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-cinema-yellow/80 hover:text-cinema-yellow transition-colors"
+                  aria-label="Twitter"
+                >
+                  <Twitter className="h-5 w-5" />
+                </a>
+              )}
+              
+              {socialMedia.facebook && (
+                <a 
+                  href={socialMedia.facebook} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-cinema-yellow/80 hover:text-cinema-yellow transition-colors"
+                  aria-label="Facebook"
+                >
+                  <Facebook className="h-5 w-5" />
+                </a>
+              )}
+              
+              {socialMedia.linkedin && (
+                <a 
+                  href={socialMedia.linkedin} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-cinema-yellow/80 hover:text-cinema-yellow transition-colors"
+                  aria-label="LinkedIn"
+                >
+                  <Linkedin className="h-5 w-5" />
+                </a>
+              )}
+              
+              {socialMedia.vimeo && (
+                <a 
+                  href={socialMedia.vimeo} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-cinema-yellow/80 hover:text-cinema-yellow transition-colors"
+                  aria-label="Vimeo"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V5a3 3 0 0 0-3-3Z"></path><path d="M10 9a3 3 0 0 0-3 3v5h3v-5"></path><path d="M17 9h-4v8h4a4 4 0 0 0 0-8Z"></path></svg>
+                </a>
+              )}
             </div>
           </div>
           

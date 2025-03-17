@@ -27,6 +27,14 @@ export interface PortfolioItem {
   featured?: boolean;
 }
 
+export interface SocialMedia {
+  instagram?: string;
+  twitter?: string;
+  vimeo?: string;
+  facebook?: string;
+  linkedin?: string;
+}
+
 // Mock database using localStorage
 class JsonStorage {
   private getItem<T>(key: string, defaultValue: T): T {
@@ -201,6 +209,21 @@ class JsonStorage {
     const filteredCategories = categories.filter(c => c !== category);
     
     this.setItem('categories', filteredCategories);
+  }
+
+  // Social Media
+  getSocialMedia(): SocialMedia {
+    return this.getItem<SocialMedia>('social_media', {
+      instagram: 'https://instagram.com/femitaofeeq',
+      twitter: 'https://twitter.com/femitaofeeq',
+      vimeo: 'https://vimeo.com/femitaofeeq',
+      facebook: '',
+      linkedin: ''
+    });
+  }
+
+  saveSocialMedia(socialMedia: SocialMedia): void {
+    this.setItem('social_media', socialMedia);
   }
 }
 
