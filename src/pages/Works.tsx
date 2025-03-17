@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -89,7 +90,7 @@ const Works = () => {
             {/* Portfolio Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredItems.map((item) => (
-                <div key={item.id} className="group animate-fade-in">
+                <Link key={item.id} to={`/works/${item.id}`} className="group animate-fade-in">
                   <div className="relative overflow-hidden rounded-lg image-reveal">
                     <img 
                       src={item.thumbnail} 
@@ -111,7 +112,7 @@ const Works = () => {
                       </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
             

@@ -10,6 +10,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import Navbar from "./components/Navbar";
 import Index from "./pages/Index";
 import Works from "./pages/Works";
+import WorkDetail from "./pages/WorkDetail";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
@@ -53,6 +54,7 @@ const App = () => (
             {/* Public Routes */}
             <Route path="/" element={<><Navbar /><Index /></>} />
             <Route path="/works" element={<Works />} />
+            <Route path="/works/:id" element={<WorkDetail />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             
