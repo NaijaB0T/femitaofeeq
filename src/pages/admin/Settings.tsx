@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import AdminLayout from '../../components/AdminLayout';
@@ -125,7 +124,7 @@ const Settings = () => {
   };
   
   const onSubmitContactInfo = (values: ContactInfoFormValues) => {
-    // Ensure all required fields are present
+    // Create a proper ContactInfo object with all required fields
     const contactInfoData: ContactInfo = {
       email: values.email,
       phone: values.phone,
