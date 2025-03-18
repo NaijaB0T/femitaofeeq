@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import AdminLayout from '../../components/AdminLayout';
@@ -28,8 +29,7 @@ const Portfolio = () => {
     year: new Date().getFullYear(),
     client: '',
     description: '',
-    featured: false,
-    videoUrl: ''
+    featured: false
   });
   
   useEffect(() => {
@@ -54,8 +54,7 @@ const Portfolio = () => {
       year: new Date().getFullYear(),
       client: '',
       description: '',
-      featured: false,
-      videoUrl: ''
+      featured: false
     });
     setIsDialogOpen(true);
   };
@@ -70,8 +69,7 @@ const Portfolio = () => {
       year: item.year,
       client: item.client,
       description: item.description || '',
-      featured: item.featured || false,
-      videoUrl: item.videoUrl || ''
+      featured: item.featured || false
     });
     setIsDialogOpen(true);
   };
@@ -188,13 +186,6 @@ const Portfolio = () => {
                     alt={item.title}
                     className="w-full aspect-video object-cover"
                   />
-                  {item.videoUrl && (
-                    <div className="absolute bottom-3 left-3">
-                      <span className="bg-black/70 text-white text-xs px-2 py-1 rounded-full">
-                        Has Video
-                      </span>
-                    </div>
-                  )}
                   <div className="absolute top-3 right-3 flex space-x-2">
                     <button
                       onClick={() => handleToggleFeatured(item.id, item.featured || false)}
@@ -352,22 +343,6 @@ const Portfolio = () => {
                     onChange={handleInputChange}
                     required
                   />
-                </div>
-                
-                <div>
-                  <label htmlFor="videoUrl" className="block text-sm font-medium mb-1">
-                    Video URL (YouTube or Vimeo)
-                  </label>
-                  <Input
-                    id="videoUrl"
-                    name="videoUrl"
-                    value={formData.videoUrl}
-                    onChange={handleInputChange}
-                    placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Leave empty to display thumbnail image instead
-                  </p>
                 </div>
                 
                 <div>

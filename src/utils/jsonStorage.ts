@@ -24,7 +24,6 @@ export interface PortfolioItem {
   client: string;
   description?: string;
   featured?: boolean;
-  videoUrl?: string; // Added field for video embedding
 }
 
 export interface SocialMedia {
