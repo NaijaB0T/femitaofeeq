@@ -1,5 +1,5 @@
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Hero from '../components/Hero';
 import WorkShowcase from '../components/WorkShowcase';
 import About from '../components/About';
@@ -8,25 +8,63 @@ import Footer from '../components/Footer';
 import { Helmet } from 'react-helmet';
 
 const Index = () => {
+  // Create refs for the sections
+  const sectionsRef = useRef<HTMLElement[]>([]);
+  
   useEffect(() => {
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
     
-    // Reveal animations for elements with image-reveal class
-    const revealElements = document.querySelectorAll('.image-reveal');
-    const observer = new IntersectionObserver((entries) => {
+    // Enhanced reveal animations for elements
+    const handleIntersection = (entries: IntersectionObserverEntry[]) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
+          if (entry.target.classList.contains('image-reveal')) {
+            entry.target.classList.add('revealed');
+          }
+          if (entry.target.classList.contains('fade-in-up')) {
+            entry.target.classList.add('visible');
+          }
+          if (entry.target.classList.contains('fade-in-left')) {
+            entry.target.classList.add('visible');
+          }
+          if (entry.target.classList.contains('fade-in-right')) {
+            entry.target.classList.add('visible');
+          }
+          if (entry.target.classList.contains('scale-in')) {
+            entry.target.classList.add('visible');
+          }
           entry.target.classList.add('revealed');
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.1 });
+    };
     
+    // Create the observer with options
+    const observer = new IntersectionObserver(handleIntersection, { 
+      threshold: 0.15,
+      rootMargin: '0px 0px -100px 0px'
+    });
+    
+    // Select elements to observe
+    const revealElements = document.querySelectorAll('.image-reveal, .fade-in-up, .fade-in-left, .fade-in-right, .scale-in');
     revealElements.forEach(el => observer.observe(el));
+    
+    // Parallax scrolling effect
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      document.querySelectorAll('.parallax').forEach((element) => {
+        const speed = element.getAttribute('data-speed') || '0.1';
+        const yPos = -(scrollY * Number(speed));
+        element.setAttribute('style', `transform: translateY(${yPos}px)`);
+      });
+    };
+    
+    window.addEventListener('scroll', handleScroll);
     
     return () => {
       revealElements.forEach(el => observer.unobserve(el));
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
@@ -56,6 +94,7 @@ const Index = () => {
       </Helmet>
       
       <main className="overflow-hidden">
+        <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-[-1] opacity-20 gradient-bg"></div>
         <Hero />
         <WorkShowcase />
         <About />
