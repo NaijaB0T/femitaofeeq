@@ -6,6 +6,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { jsonStorage, PortfolioItem } from '../utils/jsonStorage';
 import { ArrowLeft } from 'lucide-react';
+import VideoPlayer from '../components/VideoPlayer';
 
 const WorkDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -90,13 +91,19 @@ const WorkDetail = () => {
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             <div className="lg:col-span-2">
-              <div className="rounded-lg overflow-hidden mb-6">
-                <img 
-                  src={item.thumbnail} 
-                  alt={item.title}
-                  className="w-full object-cover"
-                />
-              </div>
+              {item.videoUrl ? (
+                <div className="fade-in-up mb-6 rounded-lg overflow-hidden">
+                  <VideoPlayer url={item.videoUrl} />
+                </div>
+              ) : (
+                <div className="rounded-lg overflow-hidden mb-6 image-reveal">
+                  <img 
+                    src={item.thumbnail} 
+                    alt={item.title}
+                    className="w-full object-cover"
+                  />
+                </div>
+              )}
             </div>
             
             <div>

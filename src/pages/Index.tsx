@@ -34,6 +34,9 @@ const Index = () => {
           if (entry.target.classList.contains('scale-in')) {
             entry.target.classList.add('visible');
           }
+          if (entry.target.classList.contains('video-reveal')) {
+            entry.target.classList.add('revealed');
+          }
           entry.target.classList.add('revealed');
           observer.unobserve(entry.target);
         }
@@ -47,7 +50,7 @@ const Index = () => {
     });
     
     // Select elements to observe
-    const revealElements = document.querySelectorAll('.image-reveal, .fade-in-up, .fade-in-left, .fade-in-right, .scale-in');
+    const revealElements = document.querySelectorAll('.image-reveal, .fade-in-up, .fade-in-left, .fade-in-right, .scale-in, .video-reveal');
     revealElements.forEach(el => observer.observe(el));
     
     // Parallax scrolling effect
