@@ -1,8 +1,7 @@
-
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import AdminLayout from '../../components/AdminLayout';
-import { jsonStorage } from '../../utils/jsonStorage';
+import { jsonStorage, ContactInfo } from '../../utils/jsonStorage';
 import { Plus, Save, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
@@ -15,7 +14,7 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form';
-import { Instagram, Twitter, Youtube, Facebook, Linkedin } from 'lucide-react';
+import { Instagram, Twitter, Youtube, Facebook, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -29,14 +28,22 @@ const socialMediaSchema = z.object({
   linkedin: z.string().url({ message: "Please enter a valid LinkedIn URL" }).or(z.string().length(0))
 });
 
+// Define schema for contact info form
+const contactInfoSchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email address" }),
+  phone: z.string().min(1, { message: "Phone number is required" }),
+  location: z.string().min(1, { message: "Location is required" })
+});
+
 type SocialMediaFormValues = z.infer<typeof socialMediaSchema>;
+type ContactInfoFormValues = z.infer<typeof contactInfoSchema>;
 
 const Settings = () => {
   const [categories, setCategories] = useState<string[]>([]);
   const [newCategory, setNewCategory] = useState('');
   
   // Initialize form with social media schema
-  const form = useForm<SocialMediaFormValues>({
+  const socialForm = useForm<SocialMediaFormValues>({
     resolver: zodResolver(socialMediaSchema),
     defaultValues: {
       instagram: '',
@@ -47,9 +54,20 @@ const Settings = () => {
     }
   });
   
+  // Initialize form with contact info schema
+  const contactForm = useForm<ContactInfoFormValues>({
+    resolver: zodResolver(contactInfoSchema),
+    defaultValues: {
+      email: '',
+      phone: '',
+      location: ''
+    }
+  });
+  
   useEffect(() => {
     loadCategories();
     loadSocialMedia();
+    loadContactInfo();
   }, []);
   
   const loadCategories = () => {
@@ -62,7 +80,16 @@ const Settings = () => {
     
     // Set form values from storage
     if (socialHandles) {
-      form.reset(socialHandles);
+      socialForm.reset(socialHandles);
+    }
+  };
+  
+  const loadContactInfo = () => {
+    const contactInfo = jsonStorage.getContactInfo();
+    
+    // Set form values from storage
+    if (contactInfo) {
+      contactForm.reset(contactInfo);
     }
   };
   
@@ -94,6 +121,18 @@ const Settings = () => {
   const onSubmitSocialMedia = (values: SocialMediaFormValues) => {
     jsonStorage.saveSocialMedia(values);
     toast.success('Social media links updated successfully');
+  };
+  
+  const onSubmitContactInfo = (values: ContactInfoFormValues) => {
+    // Create a proper ContactInfo object with all required fields
+    const contactInfoData: ContactInfo = {
+      email: values.email,
+      phone: values.phone,
+      location: values.location
+    };
+    
+    jsonStorage.saveContactInfo(contactInfoData);
+    toast.success('Contact information updated successfully');
   };
   
   return (
@@ -176,10 +215,10 @@ const Settings = () => {
               </div>
               
               <div className="p-6">
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmitSocialMedia)} className="space-y-4">
+                <Form {...socialForm}>
+                  <form onSubmit={socialForm.handleSubmit(onSubmitSocialMedia)} className="space-y-4">
                     <FormField
-                      control={form.control}
+                      control={socialForm.control}
                       name="instagram"
                       render={({ field }) => (
                         <FormItem>
@@ -196,7 +235,7 @@ const Settings = () => {
                     />
                     
                     <FormField
-                      control={form.control}
+                      control={socialForm.control}
                       name="twitter"
                       render={({ field }) => (
                         <FormItem>
@@ -213,7 +252,7 @@ const Settings = () => {
                     />
                     
                     <FormField
-                      control={form.control}
+                      control={socialForm.control}
                       name="vimeo"
                       render={({ field }) => (
                         <FormItem>
@@ -230,7 +269,7 @@ const Settings = () => {
                     />
                     
                     <FormField
-                      control={form.control}
+                      control={socialForm.control}
                       name="facebook"
                       render={({ field }) => (
                         <FormItem>
@@ -247,7 +286,7 @@ const Settings = () => {
                     />
                     
                     <FormField
-                      control={form.control}
+                      control={socialForm.control}
                       name="linkedin"
                       render={({ field }) => (
                         <FormItem>
@@ -270,6 +309,83 @@ const Settings = () => {
                       >
                         <Save className="h-5 w-5 mr-2" />
                         Save Social Links
+                      </button>
+                    </div>
+                  </form>
+                </Form>
+              </div>
+            </div>
+            
+            {/* Contact Information Section */}
+            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                <h2 className="text-lg font-semibold">Contact Information</h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  Manage your contact details shown throughout the site
+                </p>
+              </div>
+              
+              <div className="p-6">
+                <Form {...contactForm}>
+                  <form onSubmit={contactForm.handleSubmit(onSubmitContactInfo)} className="space-y-4">
+                    <FormField
+                      control={contactForm.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center">
+                            <Mail className="h-4 w-4 mr-2" />
+                            Email Address
+                          </FormLabel>
+                          <FormControl>
+                            <Input placeholder="info@example.com" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={contactForm.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center">
+                            <Phone className="h-4 w-4 mr-2" />
+                            Phone Number
+                          </FormLabel>
+                          <FormControl>
+                            <Input placeholder="+1 234 567 8901" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={contactForm.control}
+                      name="location"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center">
+                            <MapPin className="h-4 w-4 mr-2" />
+                            Location
+                          </FormLabel>
+                          <FormControl>
+                            <Input placeholder="City, Country" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <div className="pt-2">
+                      <button
+                        type="submit"
+                        className="inline-flex items-center bg-cinema-black text-cinema-yellow px-4 py-2 rounded-md hover:bg-opacity-90 transition-colors"
+                      >
+                        <Save className="h-5 w-5 mr-2" />
+                        Save Contact Info
                       </button>
                     </div>
                   </form>
@@ -307,27 +423,6 @@ const Settings = () => {
                       rows={3}
                       defaultValue="Award-winning cinematographer and director of photography based in Nigeria, specializing in feature films, documentaries, music videos, and commercials."
                       className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="contactEmail" className="block text-sm font-medium mb-1">
-                      Contact Email
-                    </label>
-                    <Input
-                      id="contactEmail"
-                      type="email"
-                      defaultValue="info@femitaofeeq.com"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="contactPhone" className="block text-sm font-medium mb-1">
-                      Contact Phone
-                    </label>
-                    <Input
-                      id="contactPhone"
-                      defaultValue="+234 800 000 0000"
                     />
                   </div>
                   
