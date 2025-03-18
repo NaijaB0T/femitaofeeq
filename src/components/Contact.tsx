@@ -1,7 +1,7 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Mail, Phone, Send } from 'lucide-react';
-import { jsonStorage } from '../utils/jsonStorage';
+import { jsonStorage, ContactInfo, SocialMedia } from '../utils/jsonStorage';
 import { toast } from 'sonner';
 
 const Contact = () => {
@@ -11,6 +11,24 @@ const Contact = () => {
     subject: '',
     message: ''
   });
+  
+  const [contactInfo, setContactInfo] = useState<ContactInfo>({
+    email: '',
+    phone: '',
+    location: ''
+  });
+  
+  const [socialMedia, setSocialMedia] = useState<SocialMedia>({});
+  
+  useEffect(() => {
+    // Load contact information from storage
+    const contactData = jsonStorage.getContactInfo();
+    setContactInfo(contactData);
+    
+    // Load social media from storage
+    const socialData = jsonStorage.getSocialMedia();
+    setSocialMedia(socialData);
+  }, []);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -54,8 +72,8 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold mb-1">Email</h3>
-                  <a href="mailto:info@femitaofeeq.com" className="text-lg hover:underline">
-                    info@femitaofeeq.com
+                  <a href={`mailto:${contactInfo.email}`} className="text-lg hover:underline">
+                    {contactInfo.email}
                   </a>
                 </div>
               </div>
@@ -66,8 +84,8 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold mb-1">Phone</h3>
-                  <a href="tel:+2348000000000" className="text-lg hover:underline">
-                    +234 800 000 0000
+                  <a href={`tel:${contactInfo.phone}`} className="text-lg hover:underline">
+                    {contactInfo.phone}
                   </a>
                 </div>
               </div>
@@ -75,33 +93,41 @@ const Contact = () => {
               <div className="pt-8 border-t border-cinema-black/20">
                 <h3 className="text-xl font-bold mb-4">Follow me</h3>
                 <div className="flex space-x-4">
-                  <a 
-                    href="https://instagram.com" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="bg-cinema-black text-cinema-yellow w-10 h-10 flex items-center justify-center rounded-full hover:scale-110 transition-transform"
-                    aria-label="Instagram"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-                  </a>
-                  <a 
-                    href="https://twitter.com" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="bg-cinema-black text-cinema-yellow w-10 h-10 flex items-center justify-center rounded-full hover:scale-110 transition-transform"
-                    aria-label="Twitter"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
-                  </a>
-                  <a 
-                    href="https://vimeo.com" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="bg-cinema-black text-cinema-yellow w-10 h-10 flex items-center justify-center rounded-full hover:scale-110 transition-transform"
-                    aria-label="Vimeo"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V5a3 3 0 0 0-3-3Z"></path><path d="M10 9a3 3 0 0 0-3 3v5h3v-5"></path><path d="M17 9h-4v8h4a4 4 0 0 0 0-8Z"></path></svg>
-                  </a>
+                  {socialMedia.instagram && (
+                    <a 
+                      href={socialMedia.instagram} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="bg-cinema-black text-cinema-yellow w-10 h-10 flex items-center justify-center rounded-full hover:scale-110 transition-transform"
+                      aria-label="Instagram"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    </a>
+                  )}
+                  
+                  {socialMedia.twitter && (
+                    <a 
+                      href={socialMedia.twitter} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="bg-cinema-black text-cinema-yellow w-10 h-10 flex items-center justify-center rounded-full hover:scale-110 transition-transform"
+                      aria-label="Twitter"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
+                    </a>
+                  )}
+                  
+                  {socialMedia.vimeo && (
+                    <a 
+                      href={socialMedia.vimeo} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="bg-cinema-black text-cinema-yellow w-10 h-10 flex items-center justify-center rounded-full hover:scale-110 transition-transform"
+                      aria-label="Vimeo"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V5a3 3 0 0 0-3-3Z"></path><path d="M10 9a3 3 0 0 0-3 3v5h3v-5"></path><path d="M17 9h-4v8h4a4 4 0 0 0 0-8Z"></path></svg>
+                    </a>
+                  )}
                 </div>
               </div>
             </div>

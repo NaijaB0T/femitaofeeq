@@ -4,6 +4,8 @@ import { Helmet } from 'react-helmet';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Mail, Phone, Send, MapPin } from 'lucide-react';
+import { jsonStorage, ContactInfo, SocialMedia } from '../utils/jsonStorage';
+import { toast } from 'sonner';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -13,23 +15,24 @@ const Contact = () => {
     message: ''
   });
   
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+  const [contactInfo, setContactInfo] = useState<ContactInfo>({
+    email: '',
+    phone: '',
+    location: ''
+  });
   
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // In a real application, this would send the form data to a backend
-    console.log('Form submitted:', formData);
-    // Reset form
-    setFormData({ name: '', email: '', subject: '', message: '' });
-    // Show success message
-    alert('Thanks for your message! I\'ll get back to you soon.');
-  };
+  const [socialMedia, setSocialMedia] = useState<SocialMedia>({});
   
   useEffect(() => {
     window.scrollTo(0, 0);
+    
+    // Load contact information from storage
+    const contactData = jsonStorage.getContactInfo();
+    setContactInfo(contactData);
+    
+    // Load social media from storage
+    const socialData = jsonStorage.getSocialMedia();
+    setSocialMedia(socialData);
     
     // Animation for revealing elements
     const observer = new IntersectionObserver((entries) => {
@@ -57,6 +60,29 @@ const Contact = () => {
       });
     };
   }, []);
+  
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+  
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Save message to localStorage
+    try {
+      jsonStorage.saveMessage(formData);
+      
+      // Reset form
+      setFormData({ name: '', email: '', subject: '', message: '' });
+      
+      // Show success message
+      toast.success('Thanks for your message! I\'ll get back to you soon.');
+    } catch (error) {
+      console.error('Error saving message:', error);
+      toast.error('There was a problem sending your message. Please try again.');
+    }
+  };
 
   return (
     <>
@@ -164,8 +190,8 @@ const Contact = () => {
                       </div>
                       <div>
                         <h3 className="text-lg font-bold mb-1">Email</h3>
-                        <a href="mailto:info@femitaofeeq.com" className="text-lg text-cinema-yellow/80 hover:text-cinema-yellow transition-colors">
-                          info@femitaofeeq.com
+                        <a href={`mailto:${contactInfo.email}`} className="text-lg text-cinema-yellow/80 hover:text-cinema-yellow transition-colors">
+                          {contactInfo.email}
                         </a>
                       </div>
                     </div>
@@ -176,8 +202,8 @@ const Contact = () => {
                       </div>
                       <div>
                         <h3 className="text-lg font-bold mb-1">Phone</h3>
-                        <a href="tel:+2348000000000" className="text-lg text-cinema-yellow/80 hover:text-cinema-yellow transition-colors">
-                          +234 800 000 0000
+                        <a href={`tel:${contactInfo.phone}`} className="text-lg text-cinema-yellow/80 hover:text-cinema-yellow transition-colors">
+                          {contactInfo.phone}
                         </a>
                       </div>
                     </div>
@@ -189,7 +215,7 @@ const Contact = () => {
                       <div>
                         <h3 className="text-lg font-bold mb-1">Location</h3>
                         <p className="text-lg text-cinema-yellow/80">
-                          Lagos, Nigeria
+                          {contactInfo.location}
                         </p>
                       </div>
                     </div>
@@ -199,33 +225,65 @@ const Contact = () => {
                 <div className="border border-cinema-black/20 p-6 rounded-lg">
                   <h3 className="text-xl font-bold mb-4">Follow me</h3>
                   <div className="flex space-x-4">
-                    <a 
-                      href="https://instagram.com" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="bg-cinema-black text-cinema-yellow w-12 h-12 flex items-center justify-center rounded-full hover:scale-110 transition-transform"
-                      aria-label="Instagram"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-                    </a>
-                    <a 
-                      href="https://twitter.com" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="bg-cinema-black text-cinema-yellow w-12 h-12 flex items-center justify-center rounded-full hover:scale-110 transition-transform"
-                      aria-label="Twitter"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
-                    </a>
-                    <a 
-                      href="https://vimeo.com" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="bg-cinema-black text-cinema-yellow w-12 h-12 flex items-center justify-center rounded-full hover:scale-110 transition-transform"
-                      aria-label="Vimeo"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V5a3 3 0 0 0-3-3Z"></path><path d="M10 9a3 3 0 0 0-3 3v5h3v-5"></path><path d="M17 9h-4v8h4a4 4 0 0 0 0-8Z"></path></svg>
-                    </a>
+                    {socialMedia.instagram && (
+                      <a 
+                        href={socialMedia.instagram} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="bg-cinema-black text-cinema-yellow w-12 h-12 flex items-center justify-center rounded-full hover:scale-110 transition-transform"
+                        aria-label="Instagram"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                      </a>
+                    )}
+                    
+                    {socialMedia.twitter && (
+                      <a 
+                        href={socialMedia.twitter} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="bg-cinema-black text-cinema-yellow w-12 h-12 flex items-center justify-center rounded-full hover:scale-110 transition-transform"
+                        aria-label="Twitter"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
+                      </a>
+                    )}
+                    
+                    {socialMedia.vimeo && (
+                      <a 
+                        href={socialMedia.vimeo} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="bg-cinema-black text-cinema-yellow w-12 h-12 flex items-center justify-center rounded-full hover:scale-110 transition-transform"
+                        aria-label="Vimeo"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V5a3 3 0 0 0-3-3Z"></path><path d="M10 9a3 3 0 0 0-3 3v5h3v-5"></path><path d="M17 9h-4v8h4a4 4 0 0 0 0-8Z"></path></svg>
+                      </a>
+                    )}
+                    
+                    {socialMedia.facebook && (
+                      <a 
+                        href={socialMedia.facebook} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="bg-cinema-black text-cinema-yellow w-12 h-12 flex items-center justify-center rounded-full hover:scale-110 transition-transform"
+                        aria-label="Facebook"
+                      >
+                        <Facebook className="h-5 w-5" />
+                      </a>
+                    )}
+                    
+                    {socialMedia.linkedin && (
+                      <a 
+                        href={socialMedia.linkedin} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="bg-cinema-black text-cinema-yellow w-12 h-12 flex items-center justify-center rounded-full hover:scale-110 transition-transform"
+                        aria-label="LinkedIn"
+                      >
+                        <Linkedin className="h-5 w-5" />
+                      </a>
+                    )}
                   </div>
                 </div>
                 

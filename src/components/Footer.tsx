@@ -1,17 +1,26 @@
 
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { jsonStorage, SocialMedia } from '../utils/jsonStorage';
+import { jsonStorage, SocialMedia, ContactInfo } from '../utils/jsonStorage';
 import { Instagram, Twitter, Facebook, Linkedin } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
   const [socialMedia, setSocialMedia] = useState<SocialMedia>({});
+  const [contactInfo, setContactInfo] = useState<ContactInfo>({
+    email: '',
+    phone: '',
+    location: ''
+  });
   
   useEffect(() => {
     // Load social media links from storage
     const socialLinks = jsonStorage.getSocialMedia();
     setSocialMedia(socialLinks);
+    
+    // Load contact information from storage
+    const contactData = jsonStorage.getContactInfo();
+    setContactInfo(contactData);
   }, []);
   
   return (
@@ -118,15 +127,15 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-bold mb-4">Contact</h3>
             <address className="not-italic">
-              <p className="mb-2 text-cinema-yellow/80">Lagos, Nigeria</p>
+              <p className="mb-2 text-cinema-yellow/80">{contactInfo.location}</p>
               <p className="mb-2">
-                <a href="mailto:info@femitaofeeq.com" className="text-cinema-yellow/80 hover:text-cinema-yellow transition-colors">
-                  info@femitaofeeq.com
+                <a href={`mailto:${contactInfo.email}`} className="text-cinema-yellow/80 hover:text-cinema-yellow transition-colors">
+                  {contactInfo.email}
                 </a>
               </p>
               <p>
-                <a href="tel:+2348000000000" className="text-cinema-yellow/80 hover:text-cinema-yellow transition-colors">
-                  +234 800 000 0000
+                <a href={`tel:${contactInfo.phone}`} className="text-cinema-yellow/80 hover:text-cinema-yellow transition-colors">
+                  {contactInfo.phone}
                 </a>
               </p>
             </address>

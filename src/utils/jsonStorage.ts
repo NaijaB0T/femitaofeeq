@@ -1,4 +1,3 @@
-
 /**
  * Utility functions for managing JSON data storage for the portfolio
  */
@@ -33,6 +32,12 @@ export interface SocialMedia {
   vimeo?: string;
   facebook?: string;
   linkedin?: string;
+}
+
+export interface ContactInfo {
+  email: string;
+  phone: string;
+  location: string;
 }
 
 // Mock database using localStorage
@@ -224,6 +229,19 @@ class JsonStorage {
 
   saveSocialMedia(socialMedia: SocialMedia): void {
     this.setItem('social_media', socialMedia);
+  }
+
+  // Contact Information
+  getContactInfo(): ContactInfo {
+    return this.getItem<ContactInfo>('contact_info', {
+      email: 'info@femitaofeeq.com',
+      phone: '+234 800 000 0000',
+      location: 'Lagos, Nigeria'
+    });
+  }
+
+  saveContactInfo(contactInfo: ContactInfo): void {
+    this.setItem('contact_info', contactInfo);
   }
 }
 
