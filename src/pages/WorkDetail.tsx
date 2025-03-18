@@ -91,19 +91,13 @@ const WorkDetail = () => {
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             <div className="lg:col-span-2">
-              {item.videoUrl ? (
-                <div className="fade-in-up mb-6 rounded-lg overflow-hidden">
-                  <VideoPlayer url={item.videoUrl} />
-                </div>
-              ) : (
-                <div className="rounded-lg overflow-hidden mb-6 image-reveal">
-                  <img 
-                    src={item.thumbnail} 
-                    alt={item.title}
-                    className="w-full object-cover"
-                  />
-                </div>
-              )}
+              <div className="rounded-lg overflow-hidden mb-6 image-reveal">
+                <img 
+                  src={item.thumbnail} 
+                  alt={item.title}
+                  className="w-full object-cover"
+                />
+              </div>
             </div>
             
             <div>
@@ -127,6 +121,15 @@ const WorkDetail = () => {
                       <h3 className="text-sm font-medium text-gray-500">Year</h3>
                       <p className="font-medium">{item.year}</p>
                     </div>
+                    
+                    {item.videoUrl && (
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-500">Video</h3>
+                        <div className="mt-2 fade-in-up">
+                          <VideoPlayer url={item.videoUrl} />
+                        </div>
+                      </div>
+                    )}
                     
                     {item.description && (
                       <div>
