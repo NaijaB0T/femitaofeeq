@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { Mail, Phone, Send, MapPin } from 'lucide-react';
+import { Mail, Phone, Send, MapPin, Facebook, Linkedin } from 'lucide-react';
 import { jsonStorage, ContactInfo, SocialMedia } from '../utils/jsonStorage';
 import { toast } from 'sonner';
 

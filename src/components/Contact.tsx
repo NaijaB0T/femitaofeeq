@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Mail, Phone, Send } from 'lucide-react';
+import { Mail, Phone, Send, Facebook, Linkedin } from 'lucide-react';
 import { jsonStorage, ContactInfo, SocialMedia } from '../utils/jsonStorage';
 import { toast } from 'sonner';
 

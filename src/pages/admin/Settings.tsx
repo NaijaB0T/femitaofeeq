@@ -125,7 +125,14 @@ const Settings = () => {
   };
   
   const onSubmitContactInfo = (values: ContactInfoFormValues) => {
-    jsonStorage.saveContactInfo(values);
+    // Ensure all required fields are present
+    const contactInfoData: ContactInfo = {
+      email: values.email,
+      phone: values.phone,
+      location: values.location
+    };
+    
+    jsonStorage.saveContactInfo(contactInfoData);
     toast.success('Contact information updated successfully');
   };
   
