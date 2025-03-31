@@ -110,6 +110,13 @@ const Portfolio = () => {
     });
   };
   
+  const handleThumbnailChange = (thumbnails: string[]) => {
+    setFormData({
+      ...formData,
+      thumbnail: thumbnails[0] || ''
+    });
+  };
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -322,15 +329,12 @@ const Portfolio = () => {
                 
                 <div>
                   <label htmlFor="thumbnail" className="block text-sm font-medium mb-1">
-                    Thumbnail URL
+                    Thumbnail
                   </label>
-                  <Input
-                    id="thumbnail"
-                    name="thumbnail"
-                    value={formData.thumbnail}
-                    onChange={handleInputChange}
-                    placeholder="https://example.com/image.jpg"
-                    required
+                  <ImageUploader 
+                    images={formData.thumbnail ? [formData.thumbnail] : []}
+                    onChange={handleThumbnailChange}
+                    singleMode={true}
                   />
                 </div>
                 
