@@ -27,15 +27,44 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   useEffect(() => {
     // Check if user is already logged in
-    const authStatus = localStorage.getItem('admin_authenticated');
-    setIsAuthenticated(authStatus === 'true');
+    const checkAuthStatus = () => {
+      const authStatus = localStorage.getItem('admin_authenticated');
+      const expiry = localStorage.getItem('admin_auth_expiry');
+      
+      if (authStatus === 'true' && expiry) {
+        // Check if the session has expired
+        if (new Date().getTime() < parseInt(expiry, 10)) {
+          setIsAuthenticated(true);
+        } else {
+          // Clear expired session
+          localStorage.removeItem('admin_authenticated');
+          localStorage.removeItem('admin_auth_expiry');
+          setIsAuthenticated(false);
+        }
+      } else {
+        setIsAuthenticated(false);
+      }
+    };
+
+    checkAuthStatus();
+    
+    // Add event listener for storage changes (for multi-tab support)
+    window.addEventListener('storage', checkAuthStatus);
+    
+    return () => {
+      window.removeEventListener('storage', checkAuthStatus);
+    };
   }, []);
 
   const login = async (username: string, password: string): Promise<boolean> => {
     // Simple hard-coded auth for demo purposes
     // In a real app, you would use a proper authentication system
     if (username === 'admin' && password === 'password') {
+      // Set session expiry to 24 hours from now
+      const expiryTime = new Date().getTime() + (24 * 60 * 60 * 1000);
+      
       localStorage.setItem('admin_authenticated', 'true');
+      localStorage.setItem('admin_auth_expiry', expiryTime.toString());
       setIsAuthenticated(true);
       toast.success('Logged in successfully');
       return true;
@@ -47,6 +76,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout = () => {
     localStorage.removeItem('admin_authenticated');
+    localStorage.removeItem('admin_auth_expiry');
     setIsAuthenticated(false);
     toast.success('Logged out successfully');
   };
