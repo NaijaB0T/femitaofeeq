@@ -6,6 +6,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { jsonStorage, PortfolioItem } from '../utils/jsonStorage';
 import { ArrowLeft } from 'lucide-react';
+import ImageGallery from '../components/ImageGallery';
 
 const WorkDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -97,6 +98,10 @@ const WorkDetail = () => {
                   className="w-full object-cover"
                 />
               </div>
+              
+              {item.galleryImages && item.galleryImages.length > 0 && (
+                <ImageGallery images={item.galleryImages} title={item.title} />
+              )}
             </div>
             
             <div>
@@ -120,6 +125,22 @@ const WorkDetail = () => {
                       <h3 className="text-sm font-medium text-gray-500">Year</h3>
                       <p className="font-medium">{item.year}</p>
                     </div>
+                    
+                    {item.videoUrl && (
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-500">Video</h3>
+                        <div className="mt-2">
+                          <iframe
+                            src={item.videoUrl}
+                            className="w-full aspect-video rounded"
+                            title={`${item.title} video`}
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          ></iframe>
+                        </div>
+                      </div>
+                    )}
                     
                     {item.description && (
                       <div>

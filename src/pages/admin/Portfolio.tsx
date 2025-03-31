@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import AdminLayout from '../../components/AdminLayout';
@@ -11,6 +10,7 @@ import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ImageUploader from '../../components/ImageUploader';
 
 const Portfolio = () => {
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([]);
@@ -29,7 +29,9 @@ const Portfolio = () => {
     year: new Date().getFullYear(),
     client: '',
     description: '',
-    featured: false
+    featured: false,
+    videoUrl: '',
+    galleryImages: [] as string[]
   });
   
   useEffect(() => {
@@ -54,7 +56,9 @@ const Portfolio = () => {
       year: new Date().getFullYear(),
       client: '',
       description: '',
-      featured: false
+      featured: false,
+      videoUrl: '',
+      galleryImages: []
     });
     setIsDialogOpen(true);
   };
@@ -69,7 +73,9 @@ const Portfolio = () => {
       year: item.year,
       client: item.client,
       description: item.description || '',
-      featured: item.featured || false
+      featured: item.featured || false,
+      videoUrl: item.videoUrl || '',
+      galleryImages: item.galleryImages || []
     });
     setIsDialogOpen(true);
   };
@@ -94,6 +100,13 @@ const Portfolio = () => {
     setFormData({
       ...formData,
       [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+    });
+  };
+  
+  const handleGalleryImagesChange = (galleryImages: string[]) => {
+    setFormData({
+      ...formData,
+      galleryImages
     });
   };
   
@@ -202,6 +215,12 @@ const Portfolio = () => {
                       }
                     </button>
                   </div>
+                  
+                  {item.galleryImages && item.galleryImages.length > 0 && (
+                    <div className="absolute top-3 left-3 bg-cinema-black/70 text-white text-xs px-2 py-1 rounded">
+                      {item.galleryImages.length} images
+                    </div>
+                  )}
                 </div>
                 
                 <div className="p-4">
@@ -252,7 +271,7 @@ const Portfolio = () => {
       
       {/* Add/Edit Item Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {isAddMode ? 'Add New Portfolio Item' : 'Edit Portfolio Item'}
@@ -261,9 +280,10 @@ const Portfolio = () => {
           
           <form onSubmit={handleSubmit}>
             <Tabs defaultValue="basic" className="mt-4">
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="basic">Basic Info</TabsTrigger>
                 <TabsTrigger value="details">Details</TabsTrigger>
+                <TabsTrigger value="gallery">Gallery</TabsTrigger>
               </TabsList>
               
               <TabsContent value="basic" className="space-y-4 pt-4">
@@ -346,6 +366,22 @@ const Portfolio = () => {
                 </div>
                 
                 <div>
+                  <label htmlFor="videoUrl" className="block text-sm font-medium mb-1">
+                    Video URL (YouTube or Vimeo embed link)
+                  </label>
+                  <Input
+                    id="videoUrl"
+                    name="videoUrl"
+                    value={formData.videoUrl}
+                    onChange={handleInputChange}
+                    placeholder="https://www.youtube.com/embed/..."
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Use the embed URL (e.g., https://www.youtube.com/embed/VIDEO_ID or https://player.vimeo.com/video/VIDEO_ID)
+                  </p>
+                </div>
+                
+                <div>
                   <label htmlFor="description" className="block text-sm font-medium mb-1">
                     Description
                   </label>
@@ -371,6 +407,21 @@ const Portfolio = () => {
                   <label htmlFor="featured" className="ml-2 block text-sm">
                     Feature this item on homepage
                   </label>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="gallery" className="space-y-4 pt-4">
+                <div>
+                  <label className="block text-sm font-medium mb-3">
+                    Image Gallery
+                  </label>
+                  <ImageUploader
+                    images={formData.galleryImages}
+                    onChange={handleGalleryImagesChange}
+                  />
+                  <p className="text-xs text-gray-500 mt-2">
+                    Add multiple images to create a gallery for this project.
+                  </p>
                 </div>
               </TabsContent>
             </Tabs>

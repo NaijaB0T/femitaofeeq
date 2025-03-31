@@ -24,6 +24,8 @@ export interface PortfolioItem {
   client: string;
   description?: string;
   featured?: boolean;
+  videoUrl?: string;
+  galleryImages?: string[];
 }
 
 export interface SocialMedia {
@@ -103,7 +105,11 @@ class JsonStorage {
         category: "Short Films",
         thumbnail: "https://images.unsplash.com/photo-1543536448-1e76fc2795bf?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
         year: 2023,
-        client: "Independent Production"
+        client: "Independent Production",
+        galleryImages: [
+          "https://images.unsplash.com/photo-1604514828400-1f351f5ada65?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+          "https://images.unsplash.com/photo-1533130061792-64b345e4a833?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        ]
       },
       {
         id: 2,
@@ -111,7 +117,11 @@ class JsonStorage {
         category: "Documentaries",
         thumbnail: "https://images.unsplash.com/photo-1568168172820-83c587783f91?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
         year: 2022,
-        client: "Cultural Heritage Foundation"
+        client: "Cultural Heritage Foundation",
+        galleryImages: [
+          "https://images.unsplash.com/photo-1616261167032-b16d2df8333b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+          "https://images.unsplash.com/photo-1604674666442-346be5a5b6b8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        ]
       },
       {
         id: 3,
