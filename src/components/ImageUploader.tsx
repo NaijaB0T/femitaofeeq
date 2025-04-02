@@ -1,6 +1,6 @@
 
 import { useState, ChangeEvent } from 'react';
-import { X, Upload, Trash2, Image } from 'lucide-react';
+import { X, Upload, Trash2, Image, MoveHorizontal, ArrowUp, ArrowDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -145,11 +145,28 @@ const ImageUploader = ({ images = [], onChange, singleMode = false }: ImageUploa
     }
   };
 
-  const reorderImages = (fromIndex: number, toIndex: number) => {
+  const moveImageUp = (index: number) => {
+    if (index <= 0) return;
+    
     const updatedImages = [...images];
-    const [movedItem] = updatedImages.splice(fromIndex, 1);
-    updatedImages.splice(toIndex, 0, movedItem);
+    const temp = updatedImages[index];
+    updatedImages[index] = updatedImages[index - 1];
+    updatedImages[index - 1] = temp;
+    
     onChange(updatedImages);
+    toast.success('Image order updated');
+  };
+  
+  const moveImageDown = (index: number) => {
+    if (index >= images.length - 1) return;
+    
+    const updatedImages = [...images];
+    const temp = updatedImages[index];
+    updatedImages[index] = updatedImages[index + 1];
+    updatedImages[index + 1] = temp;
+    
+    onChange(updatedImages);
+    toast.success('Image order updated');
   };
   
   return (
@@ -211,14 +228,46 @@ const ImageUploader = ({ images = [], onChange, singleMode = false }: ImageUploa
                 alt={`Gallery image ${index + 1}`}
                 className={`${singleMode ? 'w-full max-h-48 object-contain' : 'w-full aspect-video object-cover'} rounded-md`}
               />
-              <button
-                type="button"
-                onClick={() => handleRemoveImage(index)}
-                className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                aria-label="Remove image"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              <div className="absolute top-2 right-2 flex flex-col gap-1">
+                <button
+                  type="button"
+                  onClick={() => handleRemoveImage(index)}
+                  className="bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  aria-label="Remove image"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+                
+                {!singleMode && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => moveImageUp(index)}
+                      disabled={index === 0}
+                      className={`bg-black/70 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${index === 0 ? 'cursor-not-allowed opacity-50' : ''}`}
+                      aria-label="Move image up"
+                    >
+                      <ArrowUp className="h-4 w-4" />
+                    </button>
+                    
+                    <button
+                      type="button"
+                      onClick={() => moveImageDown(index)}
+                      disabled={index === images.length - 1}
+                      className={`bg-black/70 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${index === images.length - 1 ? 'cursor-not-allowed opacity-50' : ''}`}
+                      aria-label="Move image down"
+                    >
+                      <ArrowDown className="h-4 w-4" />
+                    </button>
+                  </>
+                )}
+              </div>
+              
+              {!singleMode && (
+                <div className="absolute bottom-2 left-2 bg-black/60 text-white px-2 py-0.5 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                  {index + 1} / {images.length}
+                </div>
+              )}
             </div>
           ))}
         </div>
